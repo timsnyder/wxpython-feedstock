@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 declare -a PLATFORM_BUILD_FLAGS
 if [[ $(uname) == Darwin ]]; then
   # there apparently is a c++ header file being processed as c
@@ -36,6 +38,8 @@ elif [[ $(uname) == Linux ]]; then
   PLATFORM_BUILD_FLAGS+=(--gtk2 --no_magic)
 
 fi
+
+env | sort
 
 $PYTHON build.py build_wx install_wx "${PLATFORM_BUILD_FLAGS[@]}" --prefix=$PREFIX --jobs=$CPU_COUNT
 $PYTHON build.py build_py install_py "${PLATFORM_BUILD_FLAGS[@]}" --prefix=$PREFIX --jobs=$CPU_COUNT
