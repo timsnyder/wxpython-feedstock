@@ -35,11 +35,11 @@ elif [[ $(uname) == Linux ]]; then
     export LD_LIBRARY_PATH="${BUILD_PREFIX}/${HOST}/sysroot/usr/lib64"
   fi
 
-  PLATFORM_BUILD_FLAGS+=(--gtk2 --no_magic)
+  PLATFORM_BUILD_FLAGS+=(--gtk2)
 
 fi
 
 env | sort
 
-$PYTHON build.py build_wx install_wx "${PLATFORM_BUILD_FLAGS[@]}" --prefix=$PREFIX --jobs=$CPU_COUNT
-$PYTHON build.py build_py install_py "${PLATFORM_BUILD_FLAGS[@]}" --prefix=$PREFIX --jobs=$CPU_COUNT
+$PYTHON build.py build_wx install_wx "${PLATFORM_BUILD_FLAGS[@]}" --no_magic --prefix=$PREFIX --jobs=$CPU_COUNT
+$PYTHON build.py build_py install_py "${PLATFORM_BUILD_FLAGS[@]}" --no_magic --prefix=$PREFIX --jobs=$CPU_COUNT
