@@ -25,6 +25,21 @@ if [[ $(uname) == Darwin ]]; then
   # linking stage, which leads to linking libstdc++ instead of libc++
   export LDFLAGS="$LDFLAGS -stdlib=libc++"
 
+  # on macOS, python3.6 contains old isysroot path in the Python Sysconfig data
+  # see: https://github.com/conda-forge/python-feedstock/blob/e8a7f70286ef80816b7f6e4d2f49d06f20c06e3d/recipe/sysconfigdata/_sysconfigdata_x86_64_apple_darwin13_4_0.py#L15
+  # and subsequent lines in that file that match '-isysroot'
+  # as a workaround until 3.6 recipe is fixed, we filter '-isysroot /opt/MacOSX10.9.sdk'
+  # out of the impacted env vars
+  if [[ "$PY_VER" == 36 ]]; then
+      declare -a impacted_vars
+      impacted_vars=(BLDSHARED CFLAGS CPPFLAGS LDFLAGS LDSHARED)
+      for var in "${impacted_vars[@]}"; do
+	  ${!var}=$(python -c "import sysconfig; print(sysconfig.get_config_var('"$var"'))")
+	  ${!var}=${!var//-isysroot \/opt\/MacOSX10.9.sdk/}
+	  export ${var}
+      done
+  fi
+
 elif [[ $(uname) == Linux ]]; then
   export CPPFLAGS="${CPPFLAGS} -I${PREFIX}/include/GL -I${PREFIX}/include"
 
